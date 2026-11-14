@@ -48,4 +48,20 @@ Pipelines ask for **capabilities**, never agents, so switching fleets needs no p
 | Hermes | One profile per agent. `SOUL.md` = agent body; copy skills into the profile's skills folder. |
 | LangGraph / CrewAI | One node or agent per stage. Resolve `capability` through `fleets/<active>.yaml`. |
 
+### Hermes: generated profiles
+
+```bash
+pip install pyyaml
+python scripts/export_hermes.py --fleet lean                          # → dist/hermes/lean/<agent>/
+python scripts/export_hermes.py --fleet lean --out ~/.hermes/profiles # straight into Hermes (add --force to overwrite)
+```
+
+Each profile gets a `SOUL.md` (agent spec + fleet routing context + global rules) and a `skills/` folder with every skill that agent loads. `fleet-profile.yaml` is a **reference only**: copy the model choice and toolsets into each profile's own `config.yaml` by hand, because its keys depend on your Hermes version. Gatekeeper isn't exported, since it's a rules engine plus your approval, not a model.
+
+After installing: point your single messaging bot at the **atlas** profile only. The specialists stay internal.
+
+### CI
+
+`.github/workflows/validate.yml` runs `scripts/validate.py` on every push and pull request, exports both fleets, and attaches them as the `hermes-profiles` build artifact.
+
 The models are deliberately **not** pinned. Each agent declares a `model_profile` (requirements), and you choose the models at deploy time.
