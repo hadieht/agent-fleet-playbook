@@ -12,7 +12,7 @@ model_profile:
 tools:
   allow: [sandbox.shell:clean, sandbox.code_exec, web.fetch, workspace.read, workspace.write:stages/*/verify.md]
   deny: [workspace.write:stages/*/output.md, secrets, message.send, file.delete]
-skills: [output-verification, citation-verification, prompt-injection-defense]
+skills: [output-verification, citation-verification, code-review, security-finding-triage, prompt-injection-defense]
 budgets: {max_steps: 30, max_wallclock_min: 20}
 inputs: [stage output.md + artifacts/ + brief.md acceptance criteria]
 output_contract: [Per-claim results table, Overall status, Evidence]

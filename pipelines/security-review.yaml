@@ -1,0 +1,90 @@
+id: security-review
+level: 3
+description: >
+  Security assessment of a repository, service, PR or agent system that the requester owns or
+  is authorized to assess. Threat model, code review, dependency audit and infrastructure review
+  run in parallel; every candidate finding is independently triaged; the report is written
+  from confirmed findings only.
+example_request: "Do a security review of the orders service before we go live."
+params:
+  target: "repo path / PR / service"
+  include_infra: true          # IaC / k8s / cloud config in scope?
+  include_ai: false            # LLM or agent components in scope?
+budget: {max_steps: 250, max_wallclock_min: 120, max_cost_usd: null}
+stages:
+  # Wave 0: scope and authorization (planner)
+  - id: scope
+    capability: plan
+    brief: >
+      Confirm the target is owned by or authorized for the requester; record scope, commit/ref,
+      out-of-scope areas, and rules of engagement (sandbox only, non-destructive, no third-party systems).
+    outputs: [output.md]
+    on_failure: abort
+
+  # Wave 1: parallel discovery (max 3 concurrent)
+  - id: threat-model
+    capability: critique
+    skills: [threat-modeling]
+    depends_on: [scope]
+    brief: "DFD with trust boundaries, STRIDE threats, abuse cases, ranked risks."
+    outputs: [output.md]
+  - id: code-review
+    capability: critique
+    skills: [secure-code-review]
+    depends_on: [scope]
+    brief: "Entry-point-driven source→sink review against the OWASP Top 10:2025 checklist; scanner hits are leads."
+    outputs: [output.md, artifacts/scanner-output/]
+  - id: dependency-audit
+    capability: critique
+    skills: [supply-chain-security]
+    depends_on: [scope]
+    brief: "Audit direct + transitive dependencies, lockfiles, CI pipeline pinning and secrets exposure."
+    outputs: [output.md]
+
+  # Wave 1b: optional areas (start when a worker slot frees)
+  - id: infra-review
+    capability: critique
+    skills: [cloud-infra-security]
+    depends_on: [scope]
+    when: "params.include_infra"
+    outputs: [output.md]
+  - id: ai-review
+    capability: critique
+    skills: [llm-agent-security]
+    depends_on: [scope]
+    when: "params.include_ai"
+    outputs: [output.md]
+
+  # Wave 2: independent triage of every candidate finding
+  - id: triage
+    capability: verify
+    skills: [security-finding-triage]
+    depends_on: [threat-model, code-review, dependency-audit, infra-review, ai-review]
+    brief: >
+      Run every candidate through the 7 gates; reproduce in the sandbox where feasible; CVSS v4.0
+      vectors via the official calculator; variant analysis for each confirmed finding.
+    outputs: [verify.md]
+    gate: verify_pass
+
+  # Wave 3: report
+  - id: report
+    capability: write
+    depends_on: [triage]
+    brief: >
+      Security report: executive summary, scope, confirmed findings ranked by severity with fixes,
+      rejected leads (brief), hardening suggestions, coverage gaps. Confirmed findings only in the main list.
+    outputs: [output.md]
+  - id: deliver
+    capability: plan
+    depends_on: [report]
+    skills: [synthesis]
+    outputs: [final.md]
+  - id: store
+    capability: remember
+    depends_on: [deliver]
+    brief: "File under Projects/<target>/security-review-YYYY-MM-DD with links to findings; no exploit details or secrets in the vault."
+  - id: share
+    capability: approve
+    depends_on: [deliver]
+    when: "user asked to send the report or open tickets"
+    gate: human_approved

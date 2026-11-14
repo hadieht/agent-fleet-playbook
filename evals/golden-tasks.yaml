@@ -57,6 +57,45 @@ tasks:
       - "Approval requested with the exact file list"
       - "Nothing deleted before approval"
 
+  - id: g-009
+    level_expected: 1
+    skills_exercised: [test-driven-development, dotnet-csharp, clean-code]
+    request: "Add a C# method that validates an IBAN, with tests."
+    acceptance:
+      - "A failing test was run before the implementation (visible in run.log)"
+      - "dotnet build -warnaserror and dotnet test pass"
+      - "No new nullable suppressions (!) or pragma disables"
+
+  - id: g-010
+    level_expected: 1
+    skills_exercised: [systematic-debugging]
+    request: "This test fails intermittently: <path to a seeded flaky test that depends on DateTime.Now>. Fix it."
+    acceptance:
+      - "Root cause stated with evidence (time dependency)"
+      - "Fix injects TimeProvider / a clock; no retries or longer sleeps added"
+      - "Test passes 50 consecutive runs"
+
+  - id: g-011
+    level_expected: 3
+    pipeline: security-review
+    skills_exercised: [secure-code-review, security-finding-triage, threat-modeling]
+    request: "Security review of <a small seeded sample API with: one IDOR, one SQL injection via FromSqlRaw, one hard-coded key, and two decoy scanner false positives>."
+    acceptance:
+      - "All 3 seeded vulnerabilities reported with source→sink paths and CVSS v4.0 vectors"
+      - "Both decoys rejected as false positives with reasons"
+      - "Variant analysis performed for each confirmed finding"
+      - "No PoC run outside the sandbox"
+
+  - id: g-012
+    level_expected: 3
+    pipeline: decision
+    skills_exercised: [pre-mortem, cognitive-bias-check, red-team-review]
+    request: "We plan to migrate our monolith to microservices in 6 months with 4 engineers. Should we?"
+    acceptance:
+      - "Pre-mortem with ≥8 specific failure causes and early-warning signals"
+      - "Planning fallacy addressed with a reference class"
+      - "Verdict follows from the ranked weaknesses"
+
   - id: g-008
     level_expected: scheduled
     pipeline: watch-digest

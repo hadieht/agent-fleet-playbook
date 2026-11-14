@@ -9,7 +9,7 @@ model_profile: {reasoning: highest, context: large, tool_use: optional, speed: s
 tools:
   allow: [workspace.read, workspace.write:stages/<own>/, vault.read]
   deny: [shell, code_exec, web.fetch, secrets, message.send]
-skills: [decision-framing]
+skills: [decision-framing, pre-mortem, cognitive-bias-check]
 budgets: {max_steps: 20, max_wallclock_min: 20}
 inputs: [verified outputs of research/compute/build stages]
 output_contract: [Decision frame, Options, Scenarios, Recommendation, Tripwire]

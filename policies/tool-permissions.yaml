@@ -6,6 +6,7 @@ tool_classes:
   read_only:      [workspace.read, vault.read, vault.search, kanban.read]
   web_read:       [web.search, web.fetch]
   sandbox_exec:   [sandbox.shell, sandbox.code_exec, sandbox.fs]
+  sandbox_scan:   [sandbox.scan]   # static analyzers + dependency/secret/IaC scanners on a read-only copy; no network, no secrets
   memory_write:   [vault.write]
   coordination:   [kanban.create, kanban.update, ask_user]
   gated:          [message.send, email.send, post.publish, payment, purchase, file.delete,
@@ -20,7 +21,7 @@ agents:
   forge:      [read_only, sandbox_exec, "web.fetch:docs-only"]
   quant:      [read_only, "sandbox.code_exec"]
   vega:       [read_only]
-  rook:       [read_only]
+  rook:       [read_only, sandbox_scan]
   verifier:   [read_only, sandbox_exec, web_read]
   librarian:  [read_only, memory_write]
   muse:       [read_only]

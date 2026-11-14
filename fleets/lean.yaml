@@ -16,7 +16,7 @@ bindings:                       # capability -> agent
   approve: gatekeeper
 # Extra skills an agent loads because it holds more than one capability in this fleet.
 extra_skills:
-  atlas: [decision-framing, report-writing]
+  atlas: [decision-framing, report-writing, cognitive-bias-check]
   scout: [change-monitoring]
   forge: [quantitative-modeling]
 model_guidance:

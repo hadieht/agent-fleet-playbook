@@ -211,11 +211,25 @@ Skills use the portable `SKILL.md` format: YAML frontmatter with `name` and `des
 2. **Procedure, not philosophy.** Use numbered steps the agent can follow and a checker can audit.
 3. **Include a checklist** the agent runs before returning.
 4. **Include an output format** with exact headings.
-5. **Keep a skill under ~150 lines.** Put long reference material in `skills/<name>/reference/` and load it only when needed.
+5. **Keep `SKILL.md` under ~200 lines.** Put long reference material in `skills/<name>/reference/` and link it, so it's loaded only when needed (progressive disclosure).
 6. **No secrets, no environment-specific paths.** Use placeholders like `{workspace}`.
 7. **Make it composable.** A skill shouldn't assume which agent loaded it.
 
-### 6.2 The skill set in this repo
+### 6.2 Techniques that make skills hold up under pressure
+
+Agents, like people, take shortcuts when a task feels easy or urgent. The most reliable skills in public collections (e.g. obra/superpowers, Trail of Bits) use these devices:
+
+| Technique | What it looks like | Why it works |
+|---|---|---|
+| **Iron law** | One bold, non-negotiable rule at the top ("No fix without a root cause") | Gives the agent a single thing it can't trade away |
+| **Red flags** | Thoughts or actions that mean "stop, you're off track" ("Let me just try…") | Catches drift *while it happens* |
+| **Rationalization table** | Excuse → reality ("Too simple to test" → "Simple code breaks too") | Pre-empts the exact arguments a model uses to skip steps |
+| **Gates** | Numbered pass/fail checks before output (e.g. 7 triage gates for security findings) | Turns judgment into a checklist a verifier can audit |
+| **Master workflow skill** | One skill routes to specialist skills (`code-build-verify`, `red-team-review`) | The agent loads the right depth without carrying everything at once |
+| **Evidence format** | Output templates that require commands, file:line, quotes or vectors | "Done" without evidence becomes visibly incomplete |
+| **Three-strike rule** | After 3 failed attempts, stop and escalate | Prevents infinite fix loops and runaway cost |
+
+### 6.3 The skill set in this repo
 
 See `skills/README.md` for the full catalog, which skills each agent loads, and external skill sources.
 

@@ -10,7 +10,23 @@ tools:
   allow: [sandbox.shell, sandbox.code_exec, sandbox.fs, workspace.read, workspace.write:stages/<own>/, web.fetch:docs-only]
   deny: [host.shell, secrets:global, message.send, git.push, deploy, file.delete:outside-sandbox]
   scoped_secrets: "Only those named in the brief, injected at runtime, never logged."
-skills: [code-build-verify, prompt-injection-defense]   # + quantitative-modeling in lean
+skills:                          # + quantitative-modeling in lean
+  - code-build-verify            # master workflow; routes to the skills below
+  - clean-code
+  - test-driven-development
+  - systematic-debugging
+  - refactoring-safely
+  - code-review                  # self-review of own diff
+  - api-design
+  - database-design
+  - performance-engineering
+  - git-workflow
+  - containers-and-ci
+  - dotnet-csharp
+  - python-engineering
+  - typescript-engineering
+  - supply-chain-security        # before adding any dependency
+  - prompt-injection-defense
 budgets: {max_steps: 40, max_wallclock_min: 45}
 inputs: [brief.md with target, repo/paths, constraints, acceptance tests]
 output_contract: [What was built, How to run, Verification log, Known limits, Next step]
@@ -30,6 +46,7 @@ escalation: "Stop if the change needs a secret, network access or a destructive 
 - Research questions with no build component.
 
 ## Procedure (skill `code-build-verify`)
+0. Route: `code-build-verify` picks the right skills for the brief: TDD for features, systematic debugging for bugs, refactoring-safely for restructuring, plus the language skill (`dotnet-csharp`, `python-engineering`, `typescript-engineering`).
 1. Read the full brief. List the acceptance criteria as tests.
 2. **Inspect before changing:** read the code, tests, versions and conventions.
 3. Build the smallest working increment.

@@ -10,6 +10,7 @@ Each pipeline is a DAG of stages written against **capabilities**, never agent n
 | [build-and-verify](build-and-verify.yaml) | 1–2 | Build or change code, verified, with release behind approval |
 | [decision](decision.yaml) | 3 | Buy vs build, vendor choice, go/no-go (the slide-14 example, parallelized) |
 | [watch-digest](watch-digest.yaml) | scheduled | Recurring monitoring → dated digest in the vault |
+| [security-review](security-review.yaml) | 3 | Authorized security assessment: threat model + code + dependencies (+ infra / AI) in parallel → independent triage → report |
 
 ## Stage schema
 ```yaml

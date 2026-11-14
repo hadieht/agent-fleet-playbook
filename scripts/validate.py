@@ -4,6 +4,7 @@ Usage:  python scripts/validate.py
 Needs:  pip install pyyaml
 Checks:
   - every skill folder has SKILL.md whose `name` equals the folder name and has a description
+  - SKILL.md stays under MAX_SKILL_LINES; relative links inside skill folders resolve
   - every agent's skills exist; every agent's capabilities are bound to it in some fleet
   - every fleet binds every capability; fleet bindings point to existing agents
   - every pipeline capability is known; depends_on references exist; no cycles
@@ -18,6 +19,7 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 CAPS = {"plan", "research", "monitor", "build", "compute", "strategize",
         "critique", "verify", "remember", "write", "approve"}
+MAX_SKILL_LINES = 200
 errors: list[str] = []
 
 
@@ -26,7 +28,11 @@ def frontmatter(path: Path) -> dict:
     if not m:
         errors.append(f"{path}: missing YAML frontmatter")
         return {}
-    return yaml.safe_load(m.group(1)) or {}
+    try:
+        return yaml.safe_load(m.group(1)) or {}
+    except yaml.YAMLError as e:
+        errors.append(f"{path.relative_to(ROOT).as_posix()}: invalid YAML frontmatter ({str(e).splitlines()[0]})")
+        return {}
 
 
 # Skills
@@ -43,6 +49,17 @@ for d in sorted((ROOT / "skills").iterdir()):
         errors.append(f"skills/{d.name}: name '{fm.get('name')}' != folder name")
     if not fm.get("description"):
         errors.append(f"skills/{d.name}: missing description")
+    text = f.read_text(encoding="utf-8")
+    n_lines = text.count("\n") + 1
+    if n_lines > MAX_SKILL_LINES:
+        errors.append(f"skills/{d.name}: SKILL.md has {n_lines} lines (max {MAX_SKILL_LINES}); move depth into reference/")
+    # every relative markdown link inside the skill folder must resolve
+    for md in d.rglob("*.md"):
+        for target in re.findall(r"\]\(([^)#\s]+)\)", md.read_text(encoding="utf-8")):
+            if "://" in target or target.startswith("mailto:"):
+                continue
+            if not (md.parent / target).resolve().exists():
+                errors.append(f"{md.relative_to(ROOT).as_posix()}: broken link '{target}'")
     skills.add(d.name)
 
 # Agents

@@ -20,17 +20,19 @@ stages:
 
   - id: verify-build
     capability: verify
+    skills: [output-verification, code-review]
     depends_on: [build]
-    brief: "Re-run run.log commands in a clean sandbox; diff test files; check each criterion."
+    brief: "Re-run run.log commands in a clean sandbox; diff test files; check each criterion; code-review the diff (axes 1–4 at minimum)."
     outputs: [verify.md]
     gate: verify_pass
     on_failure: escalate
 
   - id: critique
     capability: critique
+    skills: [secure-code-review, security-finding-triage]
     depends_on: [verify-build]
-    when: "plan.level >= 3 or change touches auth, payments, data deletion, infra"
-    brief: "Red-team the change: failure modes, security, rollback."
+    when: "plan.level >= 3 or change touches auth, payments, data deletion, infra, dependencies"
+    brief: "Red-team the change in code/security mode: source→sink review of the diff, failure modes, rollback."
     outputs: [critique.md]
     gate: critic_not_blocking
 

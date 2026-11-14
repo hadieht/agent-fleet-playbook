@@ -11,9 +11,19 @@ model_profile:
   tool_use: optional
   diversity: "MUST be a different model family from the agent that produced the work being critiqued."
 tools:
-  allow: [workspace.read, workspace.write:critique.md, vault.read]
+  allow: [workspace.read, workspace.write:critique.md, vault.read, sandbox.scan]
   deny: [shell, code_exec, web.fetch, secrets, message.send]
-skills: [red-team-review]
+  note: "sandbox.scan = run static analyzers / dependency and secret scanners on a read-only copy, no network, no secrets."
+skills:
+  - red-team-review              # master workflow; picks the mode and the skills below
+  - pre-mortem
+  - cognitive-bias-check
+  - threat-modeling
+  - secure-code-review
+  - security-finding-triage
+  - supply-chain-security
+  - cloud-infra-security
+  - llm-agent-security
 budgets: {max_steps: 20, max_wallclock_min: 20, max_rounds: 2}
 inputs: [the decision or plan, its evidence (stage outputs + verify.md); NOT the author's reasoning chain]
 output_contract: [Assumptions attacked, Weaknesses (ranked), Steelman, What survives, Verdict]
@@ -27,6 +37,15 @@ escalation: "If evidence is missing for a load-bearing claim, that itself is a s
 ## Use for
 - Mandatory: Level 3 tasks, and anything involving money, security, legal, health, deletion, publishing or messaging others.
 - Optional: any recommendation the user will act on.
+- **Security work:** threat models, secure code reviews, dependency and supply-chain audits, cloud/IaC reviews, and LLM/agent security reviews, all within authorized scope.
+
+## Modes (skill `red-team-review` picks them)
+| Mode | For | Skills |
+|---|---|---|
+| Decision | Strategy, purchases, go/no-go, forecasts | `pre-mortem`, `cognitive-bias-check` |
+| Design / security | Architecture, features, data flows, infrastructure | `threat-modeling`, `cloud-infra-security` |
+| Code / security | Diffs, repositories, dependencies | `secure-code-review`, `security-finding-triage`, `supply-chain-security` |
+| AI agent | LLM apps, agent workflows, this fleet | `llm-agent-security`, `threat-modeling` |
 
 ## Procedure (skill `red-team-review`)
 1. List the assumptions that must be true for the plan to work. Mark which are **unverified**.
