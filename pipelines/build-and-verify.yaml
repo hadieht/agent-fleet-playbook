@@ -1,0 +1,49 @@
+id: build-and-verify
+level: 1-2
+description: >
+  Build or change code in a sandbox, verify it independently, optionally red-team risky
+  changes, and release only after human approval.
+budget: {max_steps: 120, max_wallclock_min: 90, max_cost_usd: null}
+stages:
+  - id: docs-lookup
+    capability: research
+    when: "plan.needs_external_docs"
+    brief: "Find the official docs/API details the build needs. Cite versions."
+    outputs: [output.md]
+
+  - id: build
+    capability: build
+    depends_on: [docs-lookup]      # skipped dependencies count as satisfied
+    brief: "Implement per acceptance criteria. Sandbox only. Log real output."
+    outputs: [output.md, artifacts/run.log, artifacts/diff.patch]
+    on_failure: retry(1)
+
+  - id: verify-build
+    capability: verify
+    depends_on: [build]
+    brief: "Re-run run.log commands in a clean sandbox; diff test files; check each criterion."
+    outputs: [verify.md]
+    gate: verify_pass
+    on_failure: escalate
+
+  - id: critique
+    capability: critique
+    depends_on: [verify-build]
+    when: "plan.level >= 3 or change touches auth, payments, data deletion, infra"
+    brief: "Red-team the change: failure modes, security, rollback."
+    outputs: [critique.md]
+    gate: critic_not_blocking
+
+  - id: release
+    capability: approve
+    depends_on: [verify-build, critique]
+    when: "plan.requires_release"    # push / deploy / merge
+    brief: "Request approval with the exact diff, target, and rollback plan."
+    gate: human_approved
+    on_failure: abort
+
+  - id: deliver
+    capability: plan
+    depends_on: [verify-build, critique, release]
+    skills: [synthesis]
+    outputs: [final.md]

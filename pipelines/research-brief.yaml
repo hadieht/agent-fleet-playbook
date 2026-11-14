@@ -1,0 +1,50 @@
+id: research-brief
+level: 2
+description: >
+  Answer a question with parallel research on up to 3 sub-questions, verify the citations,
+  and deliver a written brief.
+budget: {max_steps: 120, max_wallclock_min: 45, max_cost_usd: null}
+stages:
+  # Wave 1: parallel research (the planner creates 1–3 of these)
+  - id: research-1
+    capability: research
+    brief: "Sub-question 1, defined by the planner."
+    outputs: [output.md]
+    on_failure: retry(1)
+  - id: research-2
+    capability: research
+    when: "plan.subquestions >= 2"
+    brief: "Sub-question 2."
+    outputs: [output.md]
+  - id: research-3
+    capability: research
+    when: "plan.subquestions >= 3"
+    brief: "Sub-question 3."
+    outputs: [output.md]
+
+  # Wave 2: independent verification
+  - id: verify-citations
+    capability: verify
+    skills: [citation-verification]
+    depends_on: [research-1, research-2, research-3]
+    brief: "Check every citation in all research stages."
+    outputs: [verify.md]
+    gate: verify_pass
+
+  # Wave 3: write + deliver
+  - id: write-brief
+    capability: write
+    depends_on: [verify-citations]
+    brief: "Exec brief (max 1 page) for the user from verified findings only."
+    outputs: [output.md]
+
+  - id: deliver
+    capability: plan
+    depends_on: [write-brief]
+    skills: [synthesis]
+    outputs: [final.md]
+
+  - id: store
+    capability: remember
+    depends_on: [deliver]
+    brief: "File verified findings under Research/."

@@ -1,0 +1,10 @@
+id: direct-answer
+level: 0
+description: The planner answers alone. No workers, no fan-out.
+budget: {max_steps: 8, max_wallclock_min: 3}
+stages:
+  - id: answer
+    capability: plan
+    brief: "Answer the user's question directly and concisely. If it turns out to need tools or evidence, escalate to level 1."
+    outputs: [final.md]
+    on_failure: escalate

@@ -1,0 +1,28 @@
+# Global fleet configuration. Change active_fleet to switch fleets; pipelines don't change.
+active_fleet: lean            # lean | full
+
+entry_point: atlas            # the only user-facing agent
+workspace_root: ./workspace   # per-task folders are created here
+
+global_skills:
+  all_agents: [budget-control]
+  can_propose_gated_actions: [approval-gating]   # atlas, forge, muse
+
+routing:
+  default_level: auto         # auto | 0 | 1 | 2 | 3
+  max_fanout: 3
+  prefer_lower_level: true    # when unsure, go one level lower and escalate if needed
+
+policies:
+  tools: policies/tool-permissions.yaml
+  budgets: policies/budgets.yaml
+  approvals: policies/approval-gate.md
+  security: policies/security.md
+
+tracing:
+  enabled: true
+  file: trace.jsonl           # inside each task workspace
+
+memory:
+  vault_path: ./vault         # Librarian's knowledge base (Obsidian-compatible)
+  writer: remember            # only this capability may write memory

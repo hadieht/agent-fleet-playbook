@@ -1,0 +1,23 @@
+id: full
+description: >
+  The original 10 specialist roles, improved with an independent Verifier and a non-LLM
+  approval gate. Deeper specialization, but more handoffs and higher cost.
+bindings:
+  plan: atlas
+  research: cipher
+  monitor: pulse
+  build: forge
+  compute: quant
+  strategize: vega
+  critique: rook
+  verify: verifier
+  remember: librarian
+  write: muse
+  approve: gatekeeper
+extra_skills: {}
+model_guidance:
+  atlas: "Strongest reasoning model available."
+  rook: "A different model family from atlas and vega."
+  cipher: "Strong at long-context reading and citation fidelity."
+  quant: "Strong at tool use / code execution; the math happens in code."
+  muse: "Strong writing model; must read raw stage outputs."

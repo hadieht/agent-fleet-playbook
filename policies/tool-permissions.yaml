@@ -1,0 +1,35 @@
+# Deny-by-default tool permissions. An agent may use a tool ONLY if it is listed here
+# AND in its own agents/<id>.md `tools.allow`. Where the two differ, the stricter one wins.
+default: deny
+
+tool_classes:
+  read_only:      [workspace.read, vault.read, vault.search, kanban.read]
+  web_read:       [web.search, web.fetch]
+  sandbox_exec:   [sandbox.shell, sandbox.code_exec, sandbox.fs]
+  memory_write:   [vault.write]
+  coordination:   [kanban.create, kanban.update, ask_user]
+  gated:          [message.send, email.send, post.publish, payment, purchase, file.delete,
+                   git.push, deploy, db.write:prod, permissions.change, calendar.invite]
+  never:          [host.shell, secrets:global, vault.delete]
+
+agents:
+  atlas:      [read_only, coordination]
+  scout:      [read_only, web_read]
+  cipher:     [read_only, web_read]
+  pulse:      [read_only, web_read]
+  forge:      [read_only, sandbox_exec, "web.fetch:docs-only"]
+  quant:      [read_only, "sandbox.code_exec"]
+  vega:       [read_only]
+  rook:       [read_only]
+  verifier:   [read_only, sandbox_exec, web_read]
+  librarian:  [read_only, memory_write]
+  muse:       [read_only]
+  gatekeeper: [gated]          # the only path to gated tools, after a human approves
+
+# Hard rule: no agent holds both web_read and (gated or secrets).
+# Agents that read untrusted content must not be able to act on it irreversibly.
+invariants:
+  - "not (web_read and gated)"
+  - "not (web_read and secrets)"
+  - "verify agent != producing agent"
+  - "critique agent != producing agent"

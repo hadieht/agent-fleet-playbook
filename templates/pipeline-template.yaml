@@ -1,0 +1,36 @@
+id: <pipeline-id>
+level: <0|1|2|3|scheduled>
+description: >
+  <when to use this pipeline>
+budget: {max_steps: 120, max_wallclock_min: 45, max_cost_usd: null}
+stages:
+  # Wave 1: independent work in parallel (max 3)
+  - id: <stage-a>
+    capability: research
+    brief: "<goal + inputs>"
+    outputs: [output.md]
+    on_failure: retry(1)
+
+  # Wave 2: verify anything with code, numbers or citations
+  - id: verify
+    capability: verify
+    depends_on: [<stage-a>]
+    outputs: [verify.md]
+    gate: verify_pass
+    on_failure: escalate
+
+  # Optional: critique for level 3 / irreversible
+  # - id: red-team
+  #   capability: critique
+  #   depends_on: [verify]
+  #   gate: critic_not_blocking
+
+  # Final: one synthesis + memory (+ approval if outbound)
+  - id: deliver
+    capability: plan
+    depends_on: [verify]
+    skills: [synthesis]
+    outputs: [final.md]
+  - id: store
+    capability: remember
+    depends_on: [deliver]

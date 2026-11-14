@@ -1,0 +1,34 @@
+id: watch-digest
+level: scheduled
+description: >
+  Recurring monitoring. Triggered by an external scheduler (cron, CI schedule, runtime
+  scheduler), never by an agent scheduling itself.
+schedule: "0 8 * * 1"            # example: Mondays 08:00
+params:
+  watchlist: watches/default.yaml
+budget: {max_steps: 40, max_wallclock_min: 20, max_cost_usd: null}
+stages:
+  - id: watch
+    capability: monitor
+    brief: "Run every item in {{params.watchlist}}; report deltas vs the last digest only."
+    outputs: [output.md]
+
+  - id: spot-check
+    capability: verify
+    depends_on: [watch]
+    skills: [citation-verification]
+    brief: "Verify every reported signal + spot-check 1–2 no-change items."
+    outputs: [verify.md]
+    gate: verify_pass
+
+  - id: file
+    capability: remember
+    depends_on: [spot-check]
+    brief: "File digest at Journal/YYYY-MM-DD-watch.md, link to previous digest."
+
+  - id: notify
+    capability: plan
+    depends_on: [spot-check]
+    when: "signals not empty"
+    brief: "Send the user a 3–5 line summary of signals only. Silent if nothing changed."
+    outputs: [final.md]

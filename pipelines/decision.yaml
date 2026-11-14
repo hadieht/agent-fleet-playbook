@@ -1,0 +1,69 @@
+id: decision
+level: 3
+description: >
+  Strategic decision such as "Should we buy or build the data pipeline?". This is the original
+  slide-14 example, re-cut from 7 sequential hops into 5 waves, with parallel evidence
+  gathering, independent verification, critique and a human gate on any action.
+example_request: "Should we buy or build the data pipeline?"
+budget: {max_steps: 250, max_wallclock_min: 120, max_cost_usd: null}
+stages:
+  # Wave 1: parallel evidence (max 3 concurrent)
+  - id: research-options
+    capability: research
+    brief: "Vendors + open-source options: capabilities, pricing, limits. Cited, dated."
+    outputs: [output.md]
+  - id: cost-model
+    capability: compute
+    brief: "TCO model buy vs build over 3 years; inputs from brief, assumptions labeled; sensitivity."
+    outputs: [output.md, artifacts/model.py]
+  - id: prototype
+    capability: build
+    when: "plan.needs_feasibility_check"
+    brief: "Minimal in-house prototype of the riskiest component; real run log."
+    outputs: [output.md, artifacts/run.log]
+
+  # Wave 2: independent verification of all evidence
+  - id: verify-evidence
+    capability: verify
+    skills: [citation-verification, output-verification]
+    depends_on: [research-options, cost-model, prototype]
+    outputs: [verify.md]
+    gate: verify_pass
+    on_failure: escalate
+
+  # Wave 3: decide
+  - id: decide
+    capability: strategize
+    depends_on: [verify-evidence]
+    brief: "Decision frame, options incl. do-nothing/wait, scenarios, one recommendation + tripwire."
+    outputs: [output.md]
+
+  # Wave 4: attack the decision (different model family from the strategist)
+  - id: red-team
+    capability: critique
+    depends_on: [decide]
+    brief: "Critique the recommendation using the evidence, not the strategist's reasoning."
+    outputs: [critique.md]
+    gate: critic_not_blocking
+    on_failure: escalate          # max 2 revise rounds, then deliver with open issues
+
+  # Wave 5: deliver
+  - id: exec-brief
+    capability: write
+    depends_on: [red-team]
+    brief: "One-page exec brief: answer, why, cost range, risks, tripwire."
+    outputs: [output.md]
+  - id: deliver
+    capability: plan
+    depends_on: [exec-brief]
+    skills: [synthesis]
+    outputs: [final.md]
+  - id: store
+    capability: remember
+    depends_on: [deliver]
+    brief: "File under Decisions/ with rationale, tripwire, and links to Research/."
+  - id: share
+    capability: approve
+    depends_on: [deliver]
+    when: "user asked to send the brief to others"
+    gate: human_approved

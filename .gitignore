@@ -1,0 +1,18 @@
+# secrets
+.env
+.env.*
+*.key
+*.pem
+secrets/
+
+# runtime data
+workspace/
+vault/
+evals/runs/*/
+!evals/runs/*/summary.md
+
+# misc
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

@@ -1,0 +1,25 @@
+id: lean
+description: >
+  6 agents + a non-LLM approval gate. Fewer handoffs, less context loss, cheaper.
+  The recommended starting point.
+bindings:                       # capability -> agent
+  plan: atlas
+  strategize: atlas
+  write: atlas
+  research: scout
+  monitor: scout
+  build: forge
+  compute: forge
+  critique: rook
+  verify: verifier
+  remember: librarian
+  approve: gatekeeper
+# Extra skills an agent loads because it holds more than one capability in this fleet.
+extra_skills:
+  atlas: [decision-framing, report-writing]
+  scout: [change-monitoring]
+  forge: [quantitative-modeling]
+model_guidance:
+  atlas: "Strongest reasoning model available; it plans, decides and writes."
+  rook: "A different model family from atlas."
+  verifier: "Mostly deterministic scripts; a small model for judgment checks."

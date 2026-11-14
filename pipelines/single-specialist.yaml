@@ -1,0 +1,33 @@
+id: single-specialist
+level: 1
+description: One capability does the work, the verifier checks it, the planner delivers.
+params:
+  capability: research        # research | build | compute | write | strategize
+budget: {max_steps: 60, max_wallclock_min: 30, max_cost_usd: null}
+stages:
+  - id: work
+    capability: "{{params.capability}}"
+    brief: "Expanded by the planner from the request using brief-writing."
+    outputs: [output.md, artifacts/]
+    on_failure: retry(1)
+
+  - id: check
+    capability: verify
+    depends_on: [work]
+    when: "params.capability in [research, build, compute]"
+    brief: "Verify stages/work against its acceptance criteria."
+    outputs: [verify.md]
+    gate: verify_pass
+    on_failure: escalate        # the planner retries work with the evidence (max 2) or reports the gap
+
+  - id: deliver
+    capability: plan
+    depends_on: [check]
+    skills: [synthesis]
+    outputs: [final.md]
+
+  - id: store
+    capability: remember
+    depends_on: [deliver]
+    when: "plan.memory_proposals not empty"
+    outputs: [output.md]
