@@ -9,22 +9,24 @@ tool_classes:
   sandbox_scan:   [sandbox.scan]   # static analyzers + dependency/secret/IaC scanners on a read-only copy; no network, no secrets
   memory_write:   [vault.write]
   coordination:   [kanban.create, kanban.update, ask_user]
+  stage_write:    ["workspace.write:stages/<own>/"]   # own stage folder only (approval-gate.md: auto-allow)
+  plan_write:     ["workspace.write:01-plan.md", "workspace.write:final.md", "workspace.write:stages/*/brief.md"]
   gated:          [message.send, email.send, post.publish, payment, purchase, file.delete,
                    git.push, deploy, db.write:prod, permissions.change, calendar.invite]
   never:          [host.shell, secrets:global, vault.delete]
 
 agents:
-  atlas:      [read_only, coordination]
-  scout:      [read_only, web_read]
-  cipher:     [read_only, web_read]
-  pulse:      [read_only, web_read]
-  forge:      [read_only, sandbox_exec, "web.fetch:docs-only"]
-  quant:      [read_only, "sandbox.code_exec"]
-  vega:       [read_only]
-  rook:       [read_only, sandbox_scan]
-  verifier:   [read_only, sandbox_exec, web_read]
-  librarian:  [read_only, memory_write]
-  muse:       [read_only]
+  atlas:      [read_only, coordination, plan_write, stage_write]
+  scout:      [read_only, web_read, stage_write]
+  cipher:     [read_only, web_read, stage_write]
+  pulse:      [read_only, web_read, stage_write]
+  forge:      [read_only, sandbox_exec, stage_write]   # no web: holds scoped secrets; docs come from a research stage
+  quant:      [read_only, "sandbox.code_exec", stage_write]
+  vega:       [read_only, stage_write]
+  rook:       [read_only, sandbox_scan, stage_write, "workspace.write:critique.md"]
+  verifier:   [read_only, sandbox_exec, web_read, "workspace.write:stages/*/verify.md"]
+  librarian:  [read_only, memory_write, stage_write]
+  muse:       [read_only, stage_write]
   gatekeeper: [gated]          # the only path to gated tools, after a human approves
 
 # Hard rule: no agent holds both web_read and (gated or secrets).

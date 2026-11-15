@@ -15,6 +15,7 @@ stages:
   # Wave 0: scope and authorization (planner)
   - id: scope
     capability: plan
+    skills: [engagement-scoping]
     brief: >
       Confirm the target is owned by or authorized for the requester; record scope, commit/ref,
       out-of-scope areas, and rules of engagement (sandbox only, non-destructive, no third-party systems).

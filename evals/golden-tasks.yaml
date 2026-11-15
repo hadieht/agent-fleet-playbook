@@ -103,3 +103,22 @@ tasks:
     acceptance:
       - "Reports only changes since the last digest"
       - "Explicit no-change note when nothing moved"
+
+  - id: g-013
+    level_expected: 1
+    skills_exercised: [knowledge-capture]
+    request: "Remember that the team chose Postgres 17 for the orders service. <seeded vault already holds a Decisions/ note on the orders database>"
+    acceptance:
+      - "Existing note updated or merged, not duplicated"
+      - "Note frontmatter has sources, task_id, created and updated"
+      - "Nothing deleted; any replaced note marked superseded_by"
+
+  - id: g-014
+    level_expected: 1
+    skills_exercised: [report-writing]
+    request: "Turn the verified findings in <seeded workspace with one medium-confidence claim and one could-not-verify item> into a one-page exec brief for the CTO."
+    acceptance:
+      - "Every number, name and date traces to a stage output"
+      - "The medium-confidence claim keeps its confidence label"
+      - "The could-not-verify item appears in the Fidelity note or open items"
+      - "Fits on one page"
