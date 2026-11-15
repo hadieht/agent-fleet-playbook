@@ -63,3 +63,6 @@ Several modes can apply. Run the most severe first.
 - No deal-breaker considered for an irreversible, high-stakes decision.
 - Weaknesses that restate the author's own listed risks without adding anything.
 - A verdict that doesn't follow from the weaknesses.
+- Attacking a claim nobody made, or a vulnerability you can't demonstrate.
+
+For code and security modes, reproduce before you report: [reference/reproduction-lessons.md](reference/reproduction-lessons.md).

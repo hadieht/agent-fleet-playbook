@@ -20,7 +20,7 @@ If the brief leaves a field out, state your default.
 2. For each watch item, fetch its sources and extract the current state.
 3. Diff against the previous state.
 4. A **signal** is a change that matches `signal` or crosses `threshold`. Everything else is no-change.
-5. Rank signals by impact on the user's stated goals.
+5. Rank signals by impact on the user's stated goals. **A signal that contradicts an earlier digest ranks highest:** flag it and link that digest.
 6. Write the digest. Propose it to `remember` for filing at `Journal/YYYY-MM-DD-<watch>.md`.
 
 ## Output format

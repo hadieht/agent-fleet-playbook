@@ -53,10 +53,19 @@ Pipelines ask for **capabilities**, never agents, so switching fleets needs no p
 ```bash
 pip install pyyaml
 python scripts/export_hermes.py --fleet lean                          # → dist/hermes/lean/<agent>/
-python scripts/export_hermes.py --fleet lean --out ~/.hermes/profiles # straight into Hermes (add --force to overwrite)
+python scripts/export_hermes.py --fleet lean --out ~/.hermes/profiles --dry-run   # preview what would change
+python scripts/export_hermes.py --fleet lean --out ~/.hermes/profiles --force     # update existing profiles
 ```
 
-Each profile gets a `SOUL.md` (agent spec + fleet routing context + global rules) and a `skills/` folder with every skill that agent loads. `fleet-profile.yaml` is a **reference only**: copy the model choice and toolsets into each profile's own `config.yaml` by hand, because its keys depend on your Hermes version. Gatekeeper isn't exported, since it's a rules engine plus your approval, not a model.
+Each profile gets a `SOUL.md` (agent spec + fleet routing context + global rules) and the fleet's skills in its `skills/` folder.
+
+**Existing profiles are safe:**
+- Profiles that already have a `SOUL.md` are skipped unless you pass `--force`. Run `--dry-run` first.
+- With `--force`, the old `SOUL.md` is copied to `SOUL.md.bak-<timestamp>`. Anything between `<!-- fleet:local -->` and `<!-- /fleet:local -->` (your vault path, hosts, team conventions) is carried into the new file, so put local facts there rather than editing the generated text.
+- Skills are **merged, never wiped**. Your own and the bundled Hermes skills stay. The exporter tracks what it installed in `skills/.fleet-skills`, and only updates or removes those. A fleet skill with the same name as one of yours is skipped unless you pass `--replace-colliding`.
+- `config.yaml`, memories, sessions and auth are never touched.
+
+To add an external skill to specific profiles, prefer the Hermes hub over vendor installers (which often target other runtimes): `HERMES_HOME=~/.hermes/profiles/<agent> hermes skills install <owner>/<repo>/skills/<name> --yes`. Install by role (code skills to forge, not to every profile), and read any skill flagged by the security scan before you install it by hand. `fleet-profile.yaml` is a **reference only**: copy the model choice and toolsets into each profile's own `config.yaml` by hand, because its keys depend on your Hermes version. Gatekeeper isn't exported, since it's a rules engine plus your approval, not a model.
 
 After installing: point your single messaging bot at the **atlas** profile only. The specialists stay internal.
 

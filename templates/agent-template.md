@@ -9,7 +9,7 @@ model_profile: {reasoning: <low|medium|high|highest>, context: <small|medium|lar
 tools:
   allow: []          # least privilege, justify each one
   deny: [secrets, message.send, file.delete]
-skills: []         # budget-control and approval-gating are global (fleet.config.yaml); don't list them
+skills: []         # budget-control, task-board-worker and approval-gating are global (fleet.config.yaml); don't list them
 budgets: {max_steps: 40, max_wallclock_min: 30}
 inputs: []
 output_contract: []

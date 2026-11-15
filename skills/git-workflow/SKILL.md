@@ -52,3 +52,6 @@ description: Use when preparing commits, branches and pull requests. Covers smal
 - Never `--no-verify` to skip hooks. Fix what the hook found.
 - Never `reset --hard` or `clean -fd` without first checking what will be lost (`git status`, `git stash list`).
 - Prefer `git revert` over history rewriting for anything already shared.
+
+## Before a push to a shared or public remote
+Scrub host-specific data, scan the full history with a narrow allowlist, and push only finished phases. See [reference/publishing-gates.md](reference/publishing-gates.md).

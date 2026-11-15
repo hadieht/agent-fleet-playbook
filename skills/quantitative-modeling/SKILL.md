@@ -29,3 +29,5 @@ description: Use for any calculation, cost model, TCO, forecast, financial compa
 - No number without its derivation.
 - Units on every number.
 - Report a range when inputs are uncertain.
+- An input that is unknown, not just uncertain: build a scenario table over its plausible range instead of picking one value.
+- Keep "the model says" separate from "so the decision is". The numbers are yours; the decision belongs to `strategize` or `plan`.

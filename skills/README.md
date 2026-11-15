@@ -2,7 +2,7 @@
 
 Every skill is a folder with a `SKILL.md` in the open **Agent Skills** format (YAML frontmatter `name` + `description`, then Markdown instructions). Larger skills put depth in a `reference/` folder that agents load only when needed (progressive disclosure). The format is supported by Hermes, Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI and others. In any other runtime, paste the body into the agent's prompt.
 
-**40 skills** in 7 groups. Skills marked ★ have an **iron law**: one non-negotiable rule, backed by red flags and a table of rationalizations to reject. That pattern is the most effective way we know to stop agents from taking shortcuts.
+**43 skills** in 7 groups. Skills marked ★ have an **iron law**: one non-negotiable rule, backed by red flags and a table of rationalizations to reject. That pattern is the most effective way we know to stop agents from taking shortcuts.
 
 ## Catalog
 
@@ -14,20 +14,23 @@ Every skill is a folder with a `SKILL.md` in the open **Agent Skills** format (Y
 | [brief-writing](brief-writing/SKILL.md) | Self-contained briefs for zero-context workers |
 | [synthesis](synthesis/SKILL.md) | Merge verified outputs into one answer |
 | [budget-control](budget-control/SKILL.md) | Step, token and time limits; 80% wrap-up; no-progress rule |
+| [task-board-orchestration](task-board-orchestration/SKILL.md) ★ | Route through a kanban board without deadlocks; multi-phase chains; budget-exhausted and timed-out cards; [recovery playbook](task-board-orchestration/reference/recovery-playbook.md) |
+| [task-board-worker](task-board-worker/SKILL.md) ★ | Card thread as brief; commit per item; stop clean with a resume list |
+| [merge-reconciliation](merge-reconciliation/SKILL.md) ★ | Neutral third-party resolution of two agents' merge conflicts |
 
 ### Engineering (language-agnostic)
 | Skill | Purpose |
 |---|---|
-| [code-build-verify](code-build-verify/SKILL.md) ★ | Master coding workflow; routes to the skills below; evidence before completion claims |
+| [code-build-verify](code-build-verify/SKILL.md) ★ | Master coding workflow; routes to the skills below; evidence before completion claims; [issue to change](code-build-verify/reference/issue-to-change.md) |
 | [clean-code](clean-code/SKILL.md) ★ | Naming, functions, SRP, errors, duplication, comments; [smells catalog](clean-code/reference/code-smells.md), [design principles](clean-code/reference/design-principles.md) |
 | [test-driven-development](test-driven-development/SKILL.md) ★ | Red-green-refactor, test seen failing first; [testing anti-patterns](test-driven-development/reference/testing-anti-patterns.md) |
 | [systematic-debugging](systematic-debugging/SKILL.md) ★ | 4-phase root-cause process, one variable at a time, three-strike rule |
 | [refactoring-safely](refactoring-safely/SKILL.md) ★ | Characterization tests, small steps, strangler fig, expand/contract |
 | [code-review](code-review/SKILL.md) ★ | 8-axis review with severity-ranked, scenario-backed findings |
-| [api-design](api-design/SKILL.md) ★ | HTTP semantics, Problem Details (RFC 9457), pagination, idempotency, compatibility |
+| [api-design](api-design/SKILL.md) ★ | HTTP semantics, Problem Details (RFC 9457), pagination, idempotency, compatibility; [contract-first port](api-design/reference/contract-first-port.md) |
 | [database-design](database-design/SKILL.md) ★ | Constraints, safe migrations, N+1, indexes, query plans |
 | [performance-engineering](performance-engineering/SKILL.md) ★ | Measure → change one thing → measure; profiling; caching rules |
-| [git-workflow](git-workflow/SKILL.md) ★ | Small commits, clear messages, secrets check, PR template |
+| [git-workflow](git-workflow/SKILL.md) ★ | Small commits, clear messages, secrets check, PR template; [publishing gates](git-workflow/reference/publishing-gates.md) |
 | [containers-and-ci](containers-and-ci/SKILL.md) ★ | Dockerfiles, Kubernetes, hardened CI (SHA-pinned actions, OIDC, script injection) |
 
 ### Language stacks
@@ -51,7 +54,7 @@ Every skill is a folder with a `SKILL.md` in the open **Agent Skills** format (Y
 |---|---|
 | [quantitative-modeling](quantitative-modeling/SKILL.md) | Math in code + sanity check + sensitivity |
 | [decision-framing](decision-framing/SKILL.md) | Options, scenarios, one recommendation, tripwire |
-| [red-team-review](red-team-review/SKILL.md) ★ | Master critique workflow: decision, design/security, code/security and AI-agent modes |
+| [red-team-review](red-team-review/SKILL.md) ★ | Master critique workflow: decision, design/security, code/security and AI-agent modes; [reproduction lessons](red-team-review/reference/reproduction-lessons.md) |
 | [pre-mortem](pre-mortem/SKILL.md) ★ | Assume failure, generate causes, early-warning signals, kill criteria |
 | [cognitive-bias-check](cognitive-bias-check/SKILL.md) ★ | 17 biases (incl. AI automation bias and sycophancy) with debiasing techniques |
 
@@ -78,11 +81,11 @@ Every skill is a folder with a `SKILL.md` in the open **Agent Skills** format (Y
 
 `●` = default skill · `○` = added when the agent holds an extra capability in the lean fleet
 
-**Global skills:** `budget-control` is loaded by every agent, and `approval-gating` by every agent that can propose a gated action. Your runtime should inject them automatically (see `global_skills` in `fleet.config.yaml`), so they aren't repeated in each agent's frontmatter.
+**Global skills:** `budget-control` and `task-board-worker` are loaded by every agent, and `approval-gating` by every agent that can propose a gated action. Your runtime should inject them automatically (see `global_skills` in `fleet.config.yaml`), so they aren't repeated in each agent's frontmatter.
 
 | Skill | atlas | scout | cipher | pulse | forge | quant | vega | rook | verifier | librarian | muse |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| routing-and-triage, task-decomposition, brief-writing, synthesis, engagement-scoping | ● | | | | | | | | | | |
+| routing-and-triage, task-decomposition, brief-writing, synthesis, engagement-scoping, task-board-orchestration | ● | | | | | | | | | | |
 | source-research | | ● | ● | | | | | | | | |
 | citation-verification | | ● | ● | | | | | | ● | | |
 | change-monitoring | | ○ | | ● | | | | | | | |
@@ -97,6 +100,7 @@ Every skill is a folder with a `SKILL.md` in the open **Agent Skills** format (Y
 | red-team-review, threat-modeling, secure-code-review, cloud-infra-security, llm-agent-security | | | | | | | | ● | | | |
 | security-finding-triage | | | | | | | | ● | ● | | |
 | supply-chain-security | | | | | ● | | | ● | | | |
+| merge-reconciliation | | | | | ● | | | | | | |
 | output-verification | | | | | | | | | ● | | |
 | knowledge-capture | | | | | | | | | | ● | |
 | report-writing | ○ | | | | | | | | | | ● |

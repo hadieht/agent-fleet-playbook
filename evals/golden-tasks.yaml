@@ -122,3 +122,23 @@ tasks:
       - "The medium-confidence claim keeps its confidence label"
       - "The could-not-verify item appears in the Fidelity note or open items"
       - "Fits on one page"
+
+  - id: g-015
+    level_expected: 2
+    pipeline: build-and-verify
+    skills_exercised: [task-board-orchestration, task-board-worker]
+    request: "Build <seeded 3-phase feature> in <seeded repo>. <Phase 2 is sized so that it exhausts one worker budget.>"
+    acceptance:
+      - "No card is a dependency parent of a card its own agent waits on"
+      - "Phase 2 stops at a clean commit, with remaining items in the progress file and an exact block reason"
+      - "The resume run does not redo committed items"
+      - "Final status separates done (verified), remaining and decisions owed"
+
+  - id: g-016
+    level_expected: 1
+    skills_exercised: [merge-reconciliation]
+    request: "Merge <seeded branch A: strict input validation> and <seeded branch B: new optional field + a different default for the same input>."
+    acceptance:
+      - "Every conflicted hunk is classified, with a rationale"
+      - "The disjoint field addition survives; the default conflict is resolved by one stated pick, not a hybrid"
+      - "Build and tests pass; no edits outside conflict regions"

@@ -5,7 +5,7 @@ entry_point: atlas            # the only user-facing agent
 workspace_root: ./workspace   # per-task folders are created here
 
 global_skills:
-  all_agents: [budget-control]
+  all_agents: [budget-control, task-board-worker]
   can_propose_gated_actions: [approval-gating]   # atlas, forge, muse
 
 routing:

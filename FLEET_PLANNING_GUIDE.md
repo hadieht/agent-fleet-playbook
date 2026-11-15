@@ -448,6 +448,21 @@ See `policies/budgets.yaml`.
 | Budget hit | Stop, deliver a partial result, list what's missing |
 | Ambiguous request | Planner asks the user **one** focused question before fanning out |
 | Possible prompt injection detected | Stop that stage, quarantine the source, report it |
+| Worker ran out of budget mid-phase | Verify the committed state yourself, post a numbered resume brief as a card comment, unblock; don't recreate the card |
+| Partial work is internally inconsistent | Save it on a salvage branch, reset to the last tested commit, re-scope into smaller serial cards |
+| "Timed out, retrying" | Check for surviving worker processes and half-written files first; ignore stale notices for cards already done |
+| Two agents' branches conflict | A neutral third worker reconciles (skill `merge-reconciliation`); neither author resolves it |
+
+### 15.1 Long-running and multi-phase work
+
+Lessons from running a fleet on real multi-day builds (skills `task-board-orchestration` and `task-board-worker`):
+
+1. **Start from green.** Scaffold first (skeleton, build and tests passing, first commit), then create the whole serial chain of phase cards up front.
+2. **A progress file carries the conventions.** Each phase reads it first and appends its own section. Nothing has to be re-briefed.
+3. **Size cards for one run.** Workers commit per item and, at 80% budget, stop at a clean commit with an exact resume list. A clean partial is cheap to resume; a dirty one costs a full re-run.
+4. **The coordinator never waits on a card it is the parent of.** That's a deadlock.
+5. **Comments are the durable channel.** Decisions made while a worker runs go into card comments, which the next run always sees.
+6. **Self-reports are claims.** Before publishing, the planner re-runs the gates itself, including isolated runs of tracked tests, and scrubs host-specific data from the tree.
 
 **Golden rule:** a fleet must **fail loudly**. "I couldn't verify X" is a valid answer; a confident wrong answer is the worst outcome.
 
@@ -500,6 +515,11 @@ Each of these was seen in real fleet designs.
 | Overlapping roles | Duplicate work, contradictory answers | One capability → one agent per fleet |
 | No evals | Can't tell if the fleet helps at all | Golden set + single-agent baseline |
 | Personas instead of contracts | Style without reliability | Testable output contracts |
+| Coordinator as the parent of its own sub-cards | The child waits for the parent, the parent waits for the child: deadlock | Create sub-cards unlinked; link only chains between other agents |
+| Phases bigger than one worker run | Budget runs out mid-change; the next run inherits a broken tree | One-run cards, commit per item, stop clean |
+| Relaying truncated notifications | Generic advice replaces what the worker actually found | Read the full card; say changed vs advised |
+| Exporting over a live profile | Wipes the user's own skills and local facts | Merge skills, back up `SOUL.md`, keep a `fleet:local` block |
+| Publishing worker output unscrubbed | Real hostnames, IPs and paths leak into a public repo | Grep for host terms before every commit (`git-workflow` publishing gates) |
 
 ---
 
@@ -539,6 +559,8 @@ Each of these was seen in real fleet designs.
 - [ ] Sandbox for code execution
 - [ ] Tracing on
 - [ ] Evals beat the single-agent baseline
+- [ ] Exported profiles previewed with `--dry-run`; local facts in a `fleet:local` block
+- [ ] Push gate (secret scan + host-term grep) in place for public repos
 - [ ] Budget alerts configured
 
 ---

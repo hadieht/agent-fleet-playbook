@@ -42,4 +42,6 @@ Summary in 1–3 sentences.
 ## Rules
 - No source → don't write it.
 - Never delete; supersede.
+- When updating a value, keep the old one visible under `## Superseded` with its date and source; don't silently rewrite history.
+- Prefer short, link-rich notes over long self-contained ones.
 - Never store secrets or credentials.

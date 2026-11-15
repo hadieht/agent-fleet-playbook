@@ -24,7 +24,22 @@ description: Use to independently check a stage's output against its brief's acc
 ## Notes
 ```
 
+## Re-review rounds
+When the same work comes back after a fail, lead with a different lens each round; repeating round 1's lens mostly re-finds round 1's findings.
+
+| Round | Lead lens | How |
+|---|---|---|
+| 1 | Artifact | Read the diff or deliverable **cold**, before the producer's summary; then compare and investigate every mismatch |
+| 2 | Execution | Run it yourself: build, tests, the reported behavior |
+| 3+ | Contract | Re-read the original brief and acceptance criteria; confirm every earlier requested change actually landed and nothing that passed before regressed |
+
+Parallel reviewers: give each a different lens (diff-only, full-context, run-it) rather than identical briefs, which produce correlated verdicts.
+
+Each result is exactly one of: **pass** · **fail with numbered, reproducible findings** (where, how it reproduces, why it violates the brief, the minimum fix) · **escalate** (needs a human decision or an external prerequisite). Don't block on style preferences when behavior and repo standards are met.
+
 ## Rules
 - Report only. Never edit the output.
 - `could-not-verify` beats a guessed `pass`.
 - Nondeterministic outputs: run twice and compare the structure, not exact bytes.
+- A full suite passing doesn't prove each test passes alone, or the reverse. Re-run tracked tests in isolation too.
+- Check that tests assert behavior, not snapshots of source text or constants.
