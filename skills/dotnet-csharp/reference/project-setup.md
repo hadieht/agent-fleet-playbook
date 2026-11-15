@@ -72,3 +72,24 @@ dotnet new buildprops        # Directory.Build.props
 dotnet new packagesprops     # Directory.Packages.props
 dotnet new nugetconfig
 ```
+
+## First-build pitfalls on a strict scaffold
+Each of these failed a first build of a new .NET 10 solution with the settings above.
+
+| Symptom | Cause → fix |
+|---|---|
+| Scripts or CI can't find `<Name>.sln` | SDK 10 `dotnet new sln` creates **`.slnx`**. Don't hardcode `.sln`; bare `dotnet build` / `dotnet test` find it |
+| NU1008 / NU1015 on restore | `dotnet new` templates add `Version="…"` to `PackageReference`. With central package management, strip them; versions live only in `Directory.Packages.props` |
+| CA1707 errors on every test | Underscores in test names (`Method_Scenario_Result`). Set `dotnet_diagnostic.CA1707.severity = none` for test projects |
+| `var` usage turns into errors | Don't enable IDE0008 if you want `var` style; under warnings-as-errors it fights `csharp_style_var_when_type_is_apparent` |
+| NU1903 breaks the build | NuGet audit flags a vulnerable **transitive** package. Pin the patched version in `Directory.Packages.props` (works because of transitive pinning) |
+| CS0234 on `Microsoft.AspNetCore.OpenApi` | `AddOpenApi()` / `MapOpenApi()` need an explicit package reference; it isn't in the shared framework |
+| `WebApplicationFactory` won't compile in tests | The test project needs `<FrameworkReference Include="Microsoft.AspNetCore.App" />` |
+| A reflection test can't see a referenced assembly | Assemblies load lazily; call `Assembly.Load("<Name>")` instead of scanning `AppDomain.CurrentDomain.GetAssemblies()` |
+| CS8122 inside a FluentAssertions predicate | Predicates are expression trees, where `is` patterns are illegal. Use `==` / `||` |
+| CS8361 in `$"…{cond ? 1 : 0}…"` | The `:` ends the interpolation hole. Write `{(cond ? 1 : 0)}` |
+| Minimal-API delegate fails parameter binding at startup | Mark service parameters `[FromServices]` in complex `MapGet`/`MapPost` delegates (streaming endpoints especially) |
+| `ASPNETCORE_ENVIRONMENT=Testing` is ignored by `dotnet run` | `launchSettings.json` sets the environment and wins. Use `DOTNET_ENVIRONMENT`, or `--no-launch-profile` |
+| Host crashes at startup after a new interface | Missing DI registration. Register in the same commit and run the app once |
+
+**A scaffold is done only when a live process answered:** `dotnet build` with 0 warnings, `dotnet test` green, then start the app and `curl` the health endpoint.

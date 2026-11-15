@@ -68,6 +68,9 @@ Breaking change → new version (`/v2/` or a media-type version), a deprecation 
 - IDs are opaque strings; don't expose sequential database IDs if enumeration is a risk.
 - Every endpoint is authenticated and authorized unless explicitly public (skill `secure-code-review`).
 
+## Porting an existing API
+Keeping the existing client unchanged while you replace the backend? Treat the client as the contract: [reference/contract-first-port.md](reference/contract-first-port.md).
+
 ## Review checklist
 - [ ] Example requests and responses exist for each use case
 - [ ] Correct methods and status codes; Problem Details errors

@@ -26,3 +26,4 @@ description: Use when the user must choose between options (buy vs build, vendor
 ## Rules
 - "It depends" must name what it depends on and what to do in each case.
 - One recommendation, not a menu.
+- Quantify where you can. When a number that would change the decision is missing, name it and request it from `compute` instead of guessing.

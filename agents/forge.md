@@ -26,6 +26,7 @@ skills:                          # + quantitative-modeling in lean
   - python-engineering
   - typescript-engineering
   - supply-chain-security        # before adding any dependency
+  - merge-reconciliation         # only as a neutral third party, never on its own branch
   - prompt-injection-defense
 budgets: {max_steps: 40, max_wallclock_min: 45}
 inputs: [brief.md with target, repo/paths, constraints, acceptance tests]

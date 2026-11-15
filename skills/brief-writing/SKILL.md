@@ -16,6 +16,8 @@ The worker knows **nothing** except the brief and the files it points to.
    5. **Output contract:** exact sections + output path `stages/<id>/output.md`.
    6. **Acceptance criteria:** numbered, each checkable by the Verifier.
    7. **Escalate if:** when to stop and return instead of guessing.
+   - Under **Constraints**, state the **mode**: `apply` or `advise`. For changes to live systems, list the exact approved actions, require a backup first and a check that shows the change took effect.
+   - Under **Inputs**, list **known facts**: hosts, paths, earlier findings and task ids, so the worker doesn't rediscover them. For multi-phase work: "read the progress file first, append your section".
 2. Read it as a stranger would: could someone with no history do this correctly?
 3. Remove anything the worker doesn't need. Noise lowers quality too.
 
@@ -25,6 +27,7 @@ The worker knows **nothing** except the brief and the files it points to.
 
 ## Checklist
 - [ ] All 7 sections present
+- [ ] Mode (apply / advise) stated; approved live-system actions listed
 - [ ] Every input is a concrete path or URL
 - [ ] Acceptance criteria are testable
 - [ ] Escalation condition stated
