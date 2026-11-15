@@ -2,7 +2,7 @@
 
 Every skill is a folder with a `SKILL.md` in the open **Agent Skills** format (YAML frontmatter `name` + `description`, then Markdown instructions). Larger skills put depth in a `reference/` folder that agents load only when needed (progressive disclosure). The format is supported by Hermes, Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI and others. In any other runtime, paste the body into the agent's prompt.
 
-**39 skills** in 7 groups. Skills marked ★ have an **iron law**: one non-negotiable rule, backed by red flags and a table of rationalizations to reject. That pattern is the most effective way we know to stop agents from taking shortcuts.
+**40 skills** in 7 groups. Skills marked ★ have an **iron law**: one non-negotiable rule, backed by red flags and a table of rationalizations to reject. That pattern is the most effective way we know to stop agents from taking shortcuts.
 
 ## Catalog
 
@@ -58,6 +58,7 @@ Every skill is a folder with a `SKILL.md` in the open **Agent Skills** format (Y
 ### Security
 | Skill | Purpose |
 |---|---|
+| [engagement-scoping](engagement-scoping/SKILL.md) ★ | Owner, authorization evidence, scope, ref and rules of engagement before any security stage |
 | [threat-modeling](threat-modeling/SKILL.md) ★ | DFD + trust boundaries, STRIDE per element, abuse cases, LINDDUN; [STRIDE prompts](threat-modeling/reference/stride-checklist.md) |
 | [secure-code-review](secure-code-review/SKILL.md) ★ | Differential / full / targeted modes; source→sink; [OWASP Top 10:2025 checklist](secure-code-review/reference/vulnerability-checklist.md) |
 | [security-finding-triage](security-finding-triage/SKILL.md) ★ | 7 false-positive gates, CVSS v4.0, variant analysis |
@@ -81,7 +82,7 @@ Every skill is a folder with a `SKILL.md` in the open **Agent Skills** format (Y
 
 | Skill | atlas | scout | cipher | pulse | forge | quant | vega | rook | verifier | librarian | muse |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| routing-and-triage, task-decomposition, brief-writing, synthesis | ● | | | | | | | | | | |
+| routing-and-triage, task-decomposition, brief-writing, synthesis, engagement-scoping | ● | | | | | | | | | | |
 | source-research | | ● | ● | | | | | | | | |
 | citation-verification | | ● | ● | | | | | | ● | | |
 | change-monitoring | | ○ | | ● | | | | | | | |
@@ -92,14 +93,14 @@ Every skill is a folder with a `SKILL.md` in the open **Agent Skills** format (Y
 | quantitative-modeling | | | | | ○ | ● | | | | | |
 | decision-framing | ○ | | | | | | ● | | | | |
 | cognitive-bias-check | ○ | | | | | | ● | ● | | | |
-| pre-mortem | | | | | | | ● | ● | | | |
+| pre-mortem | | | | | | | | ● | | | |
 | red-team-review, threat-modeling, secure-code-review, cloud-infra-security, llm-agent-security | | | | | | | | ● | | | |
 | security-finding-triage | | | | | | | | ● | ● | | |
 | supply-chain-security | | | | | ● | | | ● | | | |
 | output-verification | | | | | | | | | ● | | |
 | knowledge-capture | | | | | | | | | | ● | |
 | report-writing | ○ | | | | | | | | | | ● |
-| prompt-injection-defense | | ● | ● | ● | ● | | | | ● | | |
+| prompt-injection-defense | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● |
 | eval-running | *(run by you or CI, not by fleet agents)* |
 
 ## External skill sources (reviewed, used for inspiration)
